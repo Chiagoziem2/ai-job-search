@@ -13,68 +13,105 @@ The `site:` query templates in this file are the **WebSearch fallback** — for 
 ## Search Sites
 
 Primary (your market's job boards - scaffold one with `/add-portal`):
-- **[YOUR_JOB_BOARD]** - your market's largest general job board
-- **linkedin.com/jobs** - LinkedIn job listings (filter: [YOUR_COUNTRY] / [YOUR_CITY]); also covered by `linkedin-search` CLI
-- **[YOUR_INDUSTRY_JOB_BOARD]** - a niche/industry board for your field (optional)
-- **[YOUR_ADDITIONAL_JOB_BOARD]** - another major board for your market (optional)
+- **linkedin.com/jobs** - LinkedIn job listings (filter: United Kingdom / Birmingham / London / Remote); also covered by the `linkedin-search` CLI
+- **jobs.nhs.uk** - NHS Jobs, the only board carrying most NHS trust and NHS England data roles
+- **jobs.ac.uk** - UK academic jobs; university health-informatics and HDR UK hub roles
+- **uk.prosple.com / brightnetwork.co.uk / gradcracker.com** - UK student internship and placement aggregators
 
 Secondary (company career pages via Google):
 - Direct Google searches with `site:` filters for known target companies
+## Search Sites
 
-## Query Categories
+Primary (UK market):
+- **linkedin.com/jobs** — filter: United Kingdom / Birmingham / London / Remote; also covered by the `linkedin-search` CLI
+- **jobs.nhs.uk** — NHS Jobs. The only place most NHS trust and NHS England data roles are advertised. No CLI; WebSearch/WebFetch only.
+- **jobs.ac.uk** — UK academic jobs. Where university health-informatics and HDR UK hub roles appear. No CLI; WebSearch/WebFetch only.
+- **uk.prosple.com**, **brightnetwork.co.uk**, **ratemyplacement.co.uk**, **gradcracker.com** — UK student internship/placement aggregators. These, not general job boards, are where structured summer internships surface.
+- **freehire.me** — tech-first aggregator (`freehire-search` CLI). Low yield for health data science; it indexes software/ML engineering roles, not academic schemes.
 
-Queries are grouped by priority. Write **each category in every language from your Languages table** (see Language scope above). Combine each query with your location terms (e.g. your city, region, or metro area) where the site supports it.
+Secondary (employer career pages via WebSearch `site:` filters) — see the watchlist below.
 
-**Organize by function, not job title.** The same underlying work carries different titles across companies and markets (a "Data Scientist" role at one employer may be posted as "Insights Analyst" or "Data Consultant" at another). Name each priority category after the function it covers, and list several plausible job titles as query variants within that category rather than betting an entire priority tier on one exact title string.
+---
 
-### Priority 1: [YOUR_PRIMARY_ROLE_TYPE]
+## ⚠️ Read this before running `/scrape` for health data science
 
-These match your strongest and most desired career direction.
+**Keyword scraping of job boards is the wrong primary instrument for this candidate's target category, and `/scrape` alone will under-deliver.** Three structural reasons:
+
+1. **The targets are annual schemes, not rolling vacancies.** HDR UK internships, Wellcome Biomedical Vacation Scholarships, NIHR INSIGHT/INSPIRE, Amgen Scholars, and university summer research programmes recruit once a year against a fixed deadline and are advertised on the funder's or university's own page — frequently never on a job board at all. A 14-day recency window is actively harmful here: it hides a scheme whose page went up three months before its deadline.
+2. **The availability window is one block per year.** The candidate can only take a summer-vacation placement, so the live question is almost never "what is posted today" but "which cycle closes next". That is a **deadline watchlist** problem, not a search problem.
+3. **"Intern" is often not in the title.** The relevant words are *vacation scholarship*, *summer studentship*, *bursary*, *placement*, *INSIGHT*, *undergraduate research opportunity*.
+
+**So: run the watchlist below as the primary mechanism, and `/scrape` as the supplement** that catches commercial internships (pharma, health-tech, NHS) which genuinely do appear as postings.
+
+---
+
+## Scheme Watchlist (primary mechanism)
+
+Check each source page directly — do not rely on a board index. Verify every date on the source's own page before acting; cached search results for annual schemes are frequently a cycle out of date.
+
+| Scheme / host | Source to check | Typical cycle | Notes |
+|---|---|---|---|
+| HDR UK — Health Data Science Black Internship Programme | hdruk.ac.uk → Study and train | Opens autumn, closes early Jan, runs ~8 weeks late Jun–Aug | Eligibility restricted to Black applicants; UK-based; no visa sponsorship. Hosts have included Genomics England, Our Future Health, the Alan Turing Institute. |
+| HDR UK — Undergraduate Summer Internship / HDR UK–Wellcome Biomedical Vacation Scholarship | hdruk.ac.uk; hdrmidlands.org.uk | Opens spring for that summer | **Already held in 2026.** Many hosts bar previous vacation-scholarship holders — check each host's rules before re-applying. |
+| HDR UK Midlands / PIONEER (Birmingham) | hdrmidlands.org.uk | Varies | Local to Birmingham — worth a direct email even with no advertised call. |
+| NIHR INSIGHT (absorbing INSPIRE from 2027) | nihr.ac.uk → INSIGHT programme; **Aston Medical School directly** | Regional programmes, 3-year funding rounds | Aston holds NIHR funding for internships. Ask Aston Medical School's research/UG office — this is an internal route, not a public posting. |
+| Health Data Insight (HDI) | healthdatainsight.org.uk | 2–3 months from July | Open to undergraduates; ~£2,066/month in the last cycle. |
+| NHS England Data Science | nhsengland.github.io/datascience | Annual | **PhD students only** — not eligible. Monitor only in case an undergraduate route opens. |
+| Genomics England / Our Future Health / UK Biobank | their own careers pages | Ad hoc | Run occasional bioinformatics and data internships outside the HDR UK scheme. |
+| Alan Turing Institute | turing.ac.uk → internships | Annual, PhD-only at present | Ran an undergraduate pilot in 2024; watch for its return. |
+| Pharma R&D data science placements — AstraZeneca, GSK, Roche | each firm's UK early-careers page | Opens Sept–Mar for that summer; rolling review | Genuine postings — these the scraper *can* find. Fastest-closing of everything here. |
+| University summer research bursaries (Birmingham, Nottingham, Warwick, Leicester) | each university's UG research opportunity page | Spring | Nottingham is warm ground — existing TRExt supervisor relationship. |
+
+**Also non-obvious and high-yield:** email the TRExt / Lettuce supervisor at Nottingham and the Aston Medical School research lead directly. A returning intern with a shipped tool and a conference record is the cheapest hire a group can make, and these placements are routinely arranged without ever being advertised. Treat this as a first-class channel, not a fallback.
+
+---
+
+## Query Categories (supplement, for `/scrape`)
+
+Written in English only — the Languages table declares English alone.
+
+### Priority 1: Health data science / clinical informatics internships
 
 ```
-site:[YOUR_JOB_BOARD] "[YOUR_PRIMARY_JOB_TITLE_1]" [YOUR_CITY]
-site:[YOUR_JOB_BOARD] "[YOUR_PRIMARY_JOB_TITLE_2]" [YOUR_CITY]
-site:[YOUR_JOB_BOARD] "[YOUR_KEY_SKILL]" [YOUR_CITY]
-site:linkedin.com/jobs "[YOUR_PRIMARY_JOB_TITLE_1]" [YOUR_COUNTRY]
+site:linkedin.com/jobs "health data science" intern United Kingdom
+site:linkedin.com/jobs "clinical informatics" intern OR placement United Kingdom
+site:jobs.ac.uk "health data" internship OR studentship OR bursary undergraduate
+site:jobs.nhs.uk data science intern OR placement OR "work experience"
+"health data science" ("summer internship" OR "vacation scholarship" OR "summer studentship") UK 2027
 ```
 
-### Priority 2: [YOUR_DOMAIN_EXPERTISE]
-
-These match your domain expertise.
+### Priority 2: Applied ML / data science on clinical data
 
 ```
-site:[YOUR_JOB_BOARD] [YOUR_DOMAIN_KEYWORD_1] [YOUR_CITY] OR [YOUR_REGION]
-site:[YOUR_JOB_BOARD] [YOUR_DOMAIN_KEYWORD_2] [YOUR_COUNTRY]
-site:linkedin.com/jobs [YOUR_DOMAIN_KEYWORD_1] [YOUR_CITY] [YOUR_COUNTRY]
+site:linkedin.com/jobs "data science" intern Birmingham OR London OR Manchester
+site:uk.prosple.com data science internship 2027
+site:gradcracker.com data science OR "machine learning" placement
+("clinical AI" OR "medical imaging" OR "digital health") intern UK 2027
 ```
 
-### Priority 3: [YOUR_ADJACENT_ROLE_TYPE]
-
-Adjacent roles you could pivot into.
+### Priority 3: Pharma / biotech R&D data science placements
 
 ```
-site:[YOUR_JOB_BOARD] "[YOUR_ADJACENT_TITLE_1]" [YOUR_KEY_SKILL] [YOUR_CITY]
-site:[YOUR_JOB_BOARD] "[YOUR_ADJACENT_TITLE_2]" [YOUR_KEY_SKILL] [YOUR_CITY]
+site:careers.astrazeneca.com data science internship UK 2027
+site:jobs.gsk.com internship data OR analytics UK 2027
+site:careers.roche.com internship data science UK
+("AstraZeneca" OR "GSK" OR "Roche" OR "Novartis") "summer internship" 2027 data UK
 ```
 
-### Priority 4: Broader Technical / Consulting
-
-Wider net for general technical roles.
+### Priority 4: Evidence synthesis / research assistant (uses the strongest part of the record)
 
 ```
-site:[YOUR_JOB_BOARD] [YOUR_KEY_SKILL] developer [YOUR_CITY]
-site:linkedin.com/jobs "[YOUR_KEY_SKILL] developer" [YOUR_CITY]
-site:[YOUR_JOB_BOARD] "technical consultant" [YOUR_DOMAIN] [YOUR_CITY]
+site:jobs.ac.uk "systematic review" research assistant OR intern undergraduate
+site:jobs.ac.uk "evidence synthesis" summer OR vacation OR studentship
 ```
 
 ## Location Filter
 
 When evaluating results, verify the job location is within reasonable commute distance from your home. Define acceptable areas:
-- [YOUR_CITY] and surrounding areas
-- [ACCEPTABLE_AREA_1]
-- [ACCEPTABLE_AREA_2]
-- [BORDERLINE_AREA] (borderline - ~X min by transit)
-- [TOO_FAR_AREA] (too far)
+- **Birmingham and the West Midlands** - term-time base; no relocation needed
+- **Anywhere in the UK for a summer-vacation placement** - the 2026 Nottingham internship is precedent; most schemes include a travel and accommodation bursary
+- **Fully remote** - acceptable
+- CONFIRM any location the candidate would actually rule out. The repo treats this list as a hard filter, so a permissive list means nothing is filtered.
 
 ## Language Filter
 
