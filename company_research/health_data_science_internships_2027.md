@@ -1,6 +1,7 @@
 # Health Data Science Internships — UK Shortlist (compiled 2026-10-10)
 
-**For:** Chiagoziem Nneke — MBChB Year 3, Aston University. Target window: **summer 2027**.
+**For:** a third-year MBChB student with a health data science research background.
+Target window: **summer 2027**.
 
 ## ⚠️ Verification status — read first
 
